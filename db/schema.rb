@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_05_02_194028) do
+ActiveRecord::Schema[8.1].define(version: 2026_05_02_201430) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -26,6 +26,17 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_02_194028) do
     t.index ["tenant_id"], name: "index_appointments_on_tenant_id"
   end
 
+  create_table "invoices", force: :cascade do |t|
+    t.decimal "amount"
+    t.datetime "created_at", null: false
+    t.bigint "patient_id", null: false
+    t.integer "status"
+    t.bigint "tenant_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["patient_id"], name: "index_invoices_on_patient_id"
+    t.index ["tenant_id"], name: "index_invoices_on_tenant_id"
+  end
+
   create_table "patients", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "name"
@@ -33,6 +44,19 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_02_194028) do
     t.bigint "tenant_id", null: false
     t.datetime "updated_at", null: false
     t.index ["tenant_id"], name: "index_patients_on_tenant_id"
+  end
+
+  create_table "payments", force: :cascade do |t|
+    t.decimal "amount"
+    t.datetime "created_at", null: false
+    t.string "idempotency_key"
+    t.bigint "invoice_id", null: false
+    t.integer "status"
+    t.bigint "tenant_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["idempotency_key"], name: "index_payments_on_idempotency_key", unique: true
+    t.index ["invoice_id"], name: "index_payments_on_invoice_id"
+    t.index ["tenant_id"], name: "index_payments_on_tenant_id"
   end
 
   create_table "tenants", force: :cascade do |t|
@@ -52,5 +76,9 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_02_194028) do
   end
 
   add_foreign_key "appointments", "tenants"
+  add_foreign_key "invoices", "patients"
+  add_foreign_key "invoices", "tenants"
   add_foreign_key "patients", "tenants"
+  add_foreign_key "payments", "invoices"
+  add_foreign_key "payments", "tenants"
 end
