@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_05_02_201430) do
+ActiveRecord::Schema[8.1].define(version: 2026_05_02_201738) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -24,6 +24,15 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_02_201430) do
     t.datetime "updated_at", null: false
     t.index ["doctor_id", "appointment_time"], name: "index_appointments_on_doctor_id_and_appointment_time"
     t.index ["tenant_id"], name: "index_appointments_on_tenant_id"
+  end
+
+  create_table "idempotency_keys", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "key"
+    t.jsonb "response"
+    t.bigint "tenant_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["tenant_id"], name: "index_idempotency_keys_on_tenant_id"
   end
 
   create_table "invoices", force: :cascade do |t|
@@ -76,6 +85,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_02_201430) do
   end
 
   add_foreign_key "appointments", "tenants"
+  add_foreign_key "idempotency_keys", "tenants"
   add_foreign_key "invoices", "patients"
   add_foreign_key "invoices", "tenants"
   add_foreign_key "patients", "tenants"
