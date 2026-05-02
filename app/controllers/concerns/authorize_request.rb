@@ -1,4 +1,3 @@
-# app/controllers/concerns/authorize_request.rb
 module AuthorizeRequest
   extend ActiveSupport::Concern
 
@@ -15,6 +14,7 @@ module AuthorizeRequest
     decoded = Auth::JsonWebToken.decode(token)
 
     @current_user = User.find(decoded[:user_id]) if decoded
+    Current.user = @current_user
   rescue
     render json: { error: "Unauthorized" }, status: :unauthorized
   end
