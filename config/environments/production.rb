@@ -84,4 +84,13 @@ Rails.application.configure do
   #
   # Skip DNS rebinding protection for the default health check endpoint.
   # config.host_authorization = { exclude: ->(request) { request.path == "/up" } }
+  config.log_formatter = proc do |severity, datetime, progname, msg|
+    {
+      time: datetime,
+      severity: severity,
+      tenant_id: Current.tenant&.id,
+      user_id: Current.user&.id,
+      message: msg
+    }.to_json + "\n"
+  end
 end
