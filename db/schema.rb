@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_05_02_201738) do
+ActiveRecord::Schema[8.1].define(version: 2026_05_03_105726) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -35,6 +35,17 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_02_201738) do
     t.index ["tenant_id"], name: "index_idempotency_keys_on_tenant_id"
   end
 
+  create_table "inventory_items", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.date "expiry_date"
+    t.bigint "medicine_id", null: false
+    t.integer "quantity"
+    t.bigint "tenant_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["medicine_id"], name: "index_inventory_items_on_medicine_id"
+    t.index ["tenant_id"], name: "index_inventory_items_on_tenant_id"
+  end
+
   create_table "invoices", force: :cascade do |t|
     t.decimal "amount"
     t.datetime "created_at", null: false
@@ -44,6 +55,15 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_02_201738) do
     t.datetime "updated_at", null: false
     t.index ["patient_id"], name: "index_invoices_on_patient_id"
     t.index ["tenant_id"], name: "index_invoices_on_tenant_id"
+  end
+
+  create_table "medicines", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "description"
+    t.string "name"
+    t.bigint "tenant_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["tenant_id"], name: "index_medicines_on_tenant_id"
   end
 
   create_table "patients", force: :cascade do |t|
@@ -68,6 +88,29 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_02_201738) do
     t.index ["tenant_id"], name: "index_payments_on_tenant_id"
   end
 
+  create_table "prescription_items", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "dosage"
+    t.bigint "medicine_id", null: false
+    t.bigint "prescription_id", null: false
+    t.integer "quantity"
+    t.bigint "tenant_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["medicine_id"], name: "index_prescription_items_on_medicine_id"
+    t.index ["prescription_id"], name: "index_prescription_items_on_prescription_id"
+    t.index ["tenant_id"], name: "index_prescription_items_on_tenant_id"
+  end
+
+  create_table "prescriptions", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.integer "doctor_id"
+    t.bigint "patient_id", null: false
+    t.bigint "tenant_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["patient_id"], name: "index_prescriptions_on_patient_id"
+    t.index ["tenant_id"], name: "index_prescriptions_on_tenant_id"
+  end
+
   create_table "tenants", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.string "name"
@@ -86,9 +129,17 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_02_201738) do
 
   add_foreign_key "appointments", "tenants"
   add_foreign_key "idempotency_keys", "tenants"
+  add_foreign_key "inventory_items", "medicines"
+  add_foreign_key "inventory_items", "tenants"
   add_foreign_key "invoices", "patients"
   add_foreign_key "invoices", "tenants"
+  add_foreign_key "medicines", "tenants"
   add_foreign_key "patients", "tenants"
   add_foreign_key "payments", "invoices"
   add_foreign_key "payments", "tenants"
+  add_foreign_key "prescription_items", "medicines"
+  add_foreign_key "prescription_items", "prescriptions"
+  add_foreign_key "prescription_items", "tenants"
+  add_foreign_key "prescriptions", "patients"
+  add_foreign_key "prescriptions", "tenants"
 end
