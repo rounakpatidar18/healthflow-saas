@@ -43,5 +43,10 @@ module HealthflowSaas
 
     config.active_job.queue_adapter = :sidekiq
     config.middleware.use Rack::Attack
+    config.action_dispatch.default_headers = {
+      "X-Frame-Options" => "SAMEORIGIN",
+      "X-XSS-Protection" => "1; mode=block",
+      "X-Content-Type-Options" => "nosniff"
+    }
   end
 end
