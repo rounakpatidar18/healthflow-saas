@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_05_03_105726) do
+ActiveRecord::Schema[8.1].define(version: 2026_05_03_122035) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -22,6 +22,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_03_105726) do
     t.integer "status"
     t.bigint "tenant_id", null: false
     t.datetime "updated_at", null: false
+    t.index ["appointment_time"], name: "index_appointments_on_appointment_time"
     t.index ["doctor_id", "appointment_time"], name: "index_appointments_on_doctor_id_and_appointment_time"
     t.index ["tenant_id"], name: "index_appointments_on_tenant_id"
   end
@@ -53,6 +54,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_05_03_105726) do
     t.integer "status"
     t.bigint "tenant_id", null: false
     t.datetime "updated_at", null: false
+    t.index ["created_at"], name: "index_invoices_on_created_at"
     t.index ["patient_id"], name: "index_invoices_on_patient_id"
     t.index ["tenant_id"], name: "index_invoices_on_tenant_id"
   end
