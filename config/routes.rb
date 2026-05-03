@@ -9,6 +9,7 @@ Rails.application.routes.draw do
       post "login", to: "auth#login"
       resources :appointments, only: [ :create ]
       resources :payments, only: [ :create ]
+      resources :prescriptions, only: [ :create ]
     end
   end
 end
