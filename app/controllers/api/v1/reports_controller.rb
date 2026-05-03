@@ -1,0 +1,24 @@
+class Api::V1::ReportsController < ApplicationController
+  def revenue
+    data = Invoice.paid
+                  .group("DATE(created_at)")
+                  .sum(:amount)
+
+    render json: { revenue: data }
+  end
+
+  def patient_visits
+    data = Appointment.group("DATE(appointment_time)").count
+
+    render json: { visits: data }
+  end
+
+  def medicine_usage
+    data = PrescriptionItem
+            .joins(:medicine)
+            .group("medicines.name")
+            .sum(:quantity)
+
+    render json: { usage: data }
+  end
+end

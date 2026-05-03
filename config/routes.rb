@@ -7,6 +7,9 @@ Rails.application.routes.draw do
     namespace :v1 do
       post "signup", to: "auth#signup"
       post "login", to: "auth#login"
+      get "reports/revenue"
+      get "reports/patient_visits"
+      get "reports/medicine_usage"
       resources :appointments, only: [ :create ]
       resources :payments, only: [ :create ]
       resources :prescriptions, only: [ :create ]
