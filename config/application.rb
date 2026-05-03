@@ -48,5 +48,6 @@ module HealthflowSaas
       "X-XSS-Protection" => "1; mode=block",
       "X-Content-Type-Options" => "nosniff"
     }
+    config.middleware.use RequestLogger
   end
 end
