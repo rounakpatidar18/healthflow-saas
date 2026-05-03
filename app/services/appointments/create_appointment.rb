@@ -11,6 +11,9 @@ module Appointments
         appointment.tenant_id = Current.tenant.id
 
         if appointment.save
+          SendAppointmentReminderJob.set(wait_until: appointment.appointment_time - 1.hour)
+                                    .perform_later(appointment.id)
+
           success(appointment)
         else
           failure(appointment.errors.full_messages)
