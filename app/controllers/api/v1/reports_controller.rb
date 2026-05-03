@@ -1,8 +1,8 @@
 class Api::V1::ReportsController < ApplicationController
   def revenue
-    data = Invoice.paid
-                  .group("DATE(created_at)")
-                  .sum(:amount)
+    data = Rails.cache.fetch("revenue_report_#{Current.tenant.id}", expires_in: 10.minutes) do
+      Invoice.paid.group("DATE(created_at)").sum(:amount)
+    end
 
     render json: { revenue: data }
   end
