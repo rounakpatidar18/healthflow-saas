@@ -16,6 +16,9 @@ export default function MainLayout({ children }) {
       <div style={{ width: "200px", background: "#1e293b", color: "white", padding: "20px" }}>
         <h2>HealthFlow</h2>
         <button onClick={() => navigate("/dashboard")}>Dashboard</button>
+        <button onClick={() => navigate("/appointments")}>Appointments</button>
+        <button onClick={() => navigate("/patients")}>Patients</button>
+        <button onClick={() => navigate("/billing")}>Billing</button>
       </div>
 
       {/* Main Content */}
