@@ -59,3 +59,5 @@ gem "rack-attack"
 group :development, :test do
   gem "rswag"
 end
+
+gem "vite_rails"
