@@ -13,6 +13,7 @@ require "action_text/engine"
 require "action_view/railtie"
 require "action_cable/engine"
 # require "rails/test_unit/railtie"
+require_relative "../app/middleware/api_cors"
 
 # Require the gems listed in Gemfile, including any gems
 # you've limited to :test, :development, or :production.
@@ -42,6 +43,7 @@ module HealthflowSaas
     config.api_only = true
 
     config.active_job.queue_adapter = :sidekiq
+    config.middleware.insert_before 0, ApiCors
     config.middleware.use Rack::Attack
     config.action_dispatch.default_headers = {
       "X-Frame-Options" => "SAMEORIGIN",
