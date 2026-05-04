@@ -1,4 +1,4 @@
-class Api::V1::AuthController < ApplicationController
+class Api::V1::AuthController < Api::V1::BaseController
   skip_before_action :authorize_request, only: %i[signup login]
 
   def signup

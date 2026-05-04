@@ -1,4 +1,4 @@
-class Api::V1::PaymentsController < ApplicationController
+class Api::V1::PaymentsController < Api::V1::BaseController
   def create
     result = Payments::ProcessPayment.new(payment_params, request.headers).call
 

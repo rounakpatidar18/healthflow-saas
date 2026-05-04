@@ -1,4 +1,4 @@
-class Api::V1::PrescriptionsController < ApplicationController
+class Api::V1::PrescriptionsController < Api::V1::BaseController
   def create
     result = Prescriptions::CreatePrescription.new(prescription_params, Current.user).call
 

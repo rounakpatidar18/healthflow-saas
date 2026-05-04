@@ -1,5 +1,4 @@
 class ApplicationController < ActionController::API
-  include SetCurrentTenant
   include AuthorizeRequest
 
   rescue_from StandardError, with: :handle_internal_error

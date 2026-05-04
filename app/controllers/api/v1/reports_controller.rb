@@ -1,4 +1,4 @@
-class Api::V1::ReportsController < ApplicationController
+class Api::V1::ReportsController < Api::V1::BaseController
   def revenue
     data = Rails.cache.fetch("revenue_report_#{Current.tenant.id}", expires_in: 10.minutes) do
       Invoice.paid.group("DATE(created_at)").sum(:amount)

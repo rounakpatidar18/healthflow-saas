@@ -1,4 +1,4 @@
-class Api::V1::AppointmentsController < ApplicationController
+class Api::V1::AppointmentsController < Api::V1::BaseController
   def create
     result = Appointments::CreateAppointment.new(appointment_params, Current.user).call
 
