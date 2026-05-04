@@ -1,4 +1,8 @@
 class Api::V1::AppointmentsController < Api::V1::BaseController
+  def index
+    render json: Appointment.all
+  end
+
   def create
     result = Appointments::CreateAppointment.new(appointment_params, Current.user).call
 

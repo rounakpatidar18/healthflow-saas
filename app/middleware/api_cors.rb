@@ -9,7 +9,6 @@ class ApiCors
 
   def call(env)
     request = ActionDispatch::Request.new(env)
-
     return @app.call(env) unless request.path.start_with?("/api/")
 
     origin = request.headers["Origin"]

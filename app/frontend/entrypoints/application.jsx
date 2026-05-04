@@ -5,6 +5,8 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import Login from "../src/pages/Login";
 import Dashboard from "../src/pages/Dashboard";
+import Appointments from "../src/pages/appointments/Appointments";
+import NewAppointment from "../src/pages/appointments/NewAppointment";
 import ProtectedRoute from "../src/components/ProtectedRoute";
 
 function App() {
@@ -23,6 +25,8 @@ function App() {
             </ProtectedRoute>
           }
         />
+        <Route path="/appointments" element={<Appointments />} />
+        <Route path="/appointments/new" element={<NewAppointment />} />
       </Routes>
     </BrowserRouter>
   );
