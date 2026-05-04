@@ -5,6 +5,8 @@ const API = axios.create({
 });
 
 API.interceptors.request.use((config) => {
+  config.headers = config.headers || {};
+
   const token = localStorage.getItem("token");
   const tenantId = localStorage.getItem("tenant_id");
 
@@ -12,7 +14,7 @@ API.interceptors.request.use((config) => {
     config.headers.Authorization = `Bearer ${token}`;
   }
 
-  if (tenantId) {
+  if (!config.headers["X-Tenant-ID"] && tenantId) {
     config.headers["X-Tenant-ID"] = tenantId;
   }
 

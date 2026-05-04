@@ -13,7 +13,6 @@ class Api::V1::AuthController < Api::V1::BaseController
   end
 
   def login
-    binding.break
     user = User.find_by(email: params[:email])
 
     if user&.authenticate(params[:password])
