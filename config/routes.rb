@@ -19,4 +19,8 @@ Rails.application.routes.draw do
       resources :prescriptions, only: [ :create ]
     end
   end
+
+  get "*path", to: "home#index", constraints: lambda { |req|
+    !req.path.start_with?("/api/", "/api-docs", "/sidekiq") && req.format.html?
+  }
 end
