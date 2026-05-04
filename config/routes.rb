@@ -1,6 +1,8 @@
 require "sidekiq/web"
 
 Rails.application.routes.draw do
+  mount Rswag::Ui::Engine => "/api-docs"
+  mount Rswag::Api::Engine => "/api-docs"
   mount Sidekiq::Web => "/sidekiq"
   get "/health", to: proc { [ 200, {}, [ "OK" ] ] }
   namespace :api do

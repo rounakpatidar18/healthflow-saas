@@ -55,3 +55,7 @@ gem "jwt"
 gem "sidekiq"
 
 gem "rack-attack"
+
+group :development, :test do
+  gem "rswag"
+end

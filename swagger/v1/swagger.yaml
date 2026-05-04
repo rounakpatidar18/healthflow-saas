@@ -1,0 +1,413 @@
+openapi: 3.0.1
+info:
+  title: Healthflow API
+  version: v1
+  description: Initial OpenAPI document for the Healthflow SaaS API.
+servers:
+  - url: /
+tags:
+  - name: Auth
+  - name: Reports
+  - name: Appointments
+  - name: Payments
+  - name: Prescriptions
+paths:
+  /api/v1/signup:
+    post:
+      tags:
+        - Auth
+      summary: Create a user account
+      security: []
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SignupRequest'
+            example:
+              email: admin@example.com
+              password: password123
+              password_confirmation: password123
+              role: admin
+              tenant_id: 1
+      responses:
+        '201':
+          description: User created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenResponse'
+        '422':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+  /api/v1/login:
+    post:
+      tags:
+        - Auth
+      summary: Log in a user
+      security: []
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+            example:
+              email: admin@example.com
+              password: password123
+      responses:
+        '200':
+          description: Login success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenResponse'
+        '401':
+          description: Invalid credentials
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api/v1/reports/revenue:
+    get:
+      tags:
+        - Reports
+      summary: Revenue report
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+      responses:
+        '200':
+          description: Revenue data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RevenueReportResponse'
+  /api/v1/reports/patient_visits:
+    get:
+      tags:
+        - Reports
+      summary: Patient visits report
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+      responses:
+        '200':
+          description: Visits data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VisitsReportResponse'
+  /api/v1/reports/medicine_usage:
+    get:
+      tags:
+        - Reports
+      summary: Medicine usage report
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+      responses:
+        '200':
+          description: Usage data
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MedicineUsageResponse'
+  /api/v1/appointments:
+    post:
+      tags:
+        - Appointments
+      summary: Create an appointment
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AppointmentCreateRequest'
+            example:
+              appointment:
+                patient_id: 1
+                doctor_id: 2
+                appointment_time: '2026-05-04T10:00:00Z'
+                status: scheduled
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AppointmentResponse'
+        '422':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ValidationErrorResponse'
+  /api/v1/payments:
+    post:
+      tags:
+        - Payments
+      summary: Create a payment
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+        - $ref: '#/components/parameters/IdempotencyKey'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PaymentCreateRequest'
+            example:
+              invoice_id: 123
+      responses:
+        '200':
+          description: Payment processed
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentResponse'
+        '422':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+  /api/v1/prescriptions:
+    post:
+      tags:
+        - Prescriptions
+      summary: Create a prescription
+      security:
+        - bearerAuth: []
+      parameters:
+        - $ref: '#/components/parameters/TenantId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PrescriptionCreateRequest'
+            example:
+              prescription:
+                patient_id: 1
+                items:
+                  - medicine_id: 10
+                    dosage: "1 tablet"
+                    quantity: 30
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PrescriptionResponse'
+        '422':
+          description: Validation error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  parameters:
+    TenantId:
+      name: X-Tenant-ID
+      in: header
+      required: true
+      description: Tenant identifier used to scope the request.
+      schema:
+        type: integer
+    IdempotencyKey:
+      name: Idempotency-Key
+      in: header
+      required: true
+      description: Required for payment requests to prevent duplicate processing.
+      schema:
+        type: string
+  schemas:
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+      additionalProperties: false
+    ValidationErrorResponse:
+      type: object
+      properties:
+        errors:
+          type: array
+          items:
+            type: string
+      additionalProperties: false
+    TokenResponse:
+      type: object
+      properties:
+        token:
+          type: string
+      required:
+        - token
+      additionalProperties: false
+    SignupRequest:
+      type: object
+      required:
+        - email
+        - password
+        - password_confirmation
+        - role
+        - tenant_id
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          format: password
+        password_confirmation:
+          type: string
+          format: password
+        role:
+          type: string
+          enum:
+            - admin
+            - doctor
+            - staff
+        tenant_id:
+          type: integer
+    LoginRequest:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          format: password
+    RevenueReportResponse:
+      type: object
+      properties:
+        revenue:
+          type: object
+          additionalProperties:
+            type: number
+      additionalProperties: false
+    VisitsReportResponse:
+      type: object
+      properties:
+        visits:
+          type: object
+          additionalProperties:
+            type: number
+      additionalProperties: false
+    MedicineUsageResponse:
+      type: object
+      properties:
+        usage:
+          type: object
+          additionalProperties:
+            type: number
+      additionalProperties: false
+    AppointmentCreateRequest:
+      type: object
+      required:
+        - appointment
+      properties:
+        appointment:
+          type: object
+          required:
+            - patient_id
+            - doctor_id
+            - appointment_time
+          properties:
+            patient_id:
+              type: integer
+            doctor_id:
+              type: integer
+            appointment_time:
+              type: string
+              format: date-time
+            status:
+              type: string
+              enum:
+                - scheduled
+                - completed
+                - cancelled
+    AppointmentResponse:
+      type: object
+      description: Appointment record returned by the API.
+      additionalProperties: true
+    PaymentCreateRequest:
+      type: object
+      required:
+        - invoice_id
+      properties:
+        invoice_id:
+          type: integer
+    PaymentResponse:
+      type: object
+      properties:
+        payment_id:
+          type: integer
+        invoice_id:
+          type: integer
+        status:
+          type: string
+      required:
+        - payment_id
+        - invoice_id
+        - status
+      additionalProperties: false
+    PrescriptionCreateRequest:
+      type: object
+      required:
+        - prescription
+      properties:
+        prescription:
+          type: object
+          required:
+            - patient_id
+            - items
+          properties:
+            patient_id:
+              type: integer
+            items:
+              type: array
+              items:
+                type: object
+                required:
+                  - medicine_id
+                  - dosage
+                  - quantity
+                properties:
+                  medicine_id:
+                    type: integer
+                  dosage:
+                    type: string
+                  quantity:
+                    type: integer
+    PrescriptionResponse:
+      type: object
+      description: Prescription record returned by the API.
+      additionalProperties: true
